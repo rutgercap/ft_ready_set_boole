@@ -4,6 +4,7 @@ mod adder;
 mod evaluation;
 mod gray_code;
 mod multiplier;
+mod truth_table;
 
 fn main() {
     let something = 10;
@@ -25,4 +26,6 @@ fn main() {
         "The result from evaluating the expression '{}' is: {}",
         expression, result
     );
+
+    truth_table::print_truth_table("AB&C|");
 }
