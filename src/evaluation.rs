@@ -1,3 +1,53 @@
+#[derive(PartialEq, Debug, Clone)]
+struct Node {
+    operator: Operator,
+    left: Option<Box<Node>>,
+    right: Option<Box<Node>>,
+}
+
+impl Node {
+    fn new(operator: Operator, left: Option<Box<Node>>, right: Option<Box<Node>>) -> Node {
+        Node {
+            operator,
+            left,
+            right,
+        }
+    }
+}
+
+fn parse_into_tree(formulate: &str) -> Node {
+    if formulate.is_empty() {
+        panic!("Invalid expression");
+    }
+    let mut operands = Vec::new();
+    let mut head: Option<Node> = None;
+    for char in formulate.chars() {
+        let operator = Operator::from_char(char);
+        if operator.is_operand() {
+            operands.push(operator);
+        } else {
+            let a = operands.pop().expect("Invalid expression");
+            let b = operands.pop().expect("Invalid expression");
+            if head.is_none() {
+                let new_node = Node::new(
+                    operator,
+                    Some(Box::new(Node::new(a, None, None))),
+                    Some(Box::new(Node::new(b, None, None))),
+                );
+                head = Some(new_node);
+            } else {
+                let new_node = Node::new(
+                    operator,
+                    Some(Box::new(head.unwrap())),
+                    Some(Box::new(Node::new(b, None, None))),
+                );
+                head = Some(new_node);
+            }
+        }
+    }
+    head.unwrap()
+}
+
 #[derive(PartialEq, Debug, Clone, Copy)]
 enum Operator {
     True,
@@ -31,27 +81,6 @@ impl Operator {
             Operator::False => true,
             _ => false,
         }
-    }
-}
-
-#[derive(PartialEq, Debug, Clone)]
-struct Node {
-    operator: Option<Operator>,
-    left: Option<Box<Node>>,
-    right: Option<Box<Node>>,
-}
-
-impl Node {
-    fn new(operator: Option<Operator>, left: Option<Box<Node>>, right: Option<Box<Node>>) -> Node {
-        Node {
-            operator,
-            left,
-            right,
-        }
-    }
-
-    fn insert(mut self, node: Node) -> Self {
-        self
     }
 }
 
@@ -96,8 +125,12 @@ fn evaluate(a: Operator, b: Operator, operator: Operator) -> Operator {
     }
 }
 
-fn parse_expression(formula: &str) -> bool {
+pub fn eval_formula(formula: &str) -> bool {
+    if formula.is_empty() {
+        return true;
+    }
     let mut operands = Vec::new();
+    let mut head: Option<Node> = None;
     for char in formula.chars() {
         let operator = Operator::from_char(char);
         if operator.is_operand() {
@@ -105,16 +138,26 @@ fn parse_expression(formula: &str) -> bool {
         } else {
             let a = operands.pop().expect("Invalid expression");
             let b = operands.pop().expect("Invalid expression");
-            // solve and push result to operands
             let result = evaluate(a, b, operator);
+            if head.is_none() {
+                let new_node = Node::new(
+                    operator,
+                    Some(Box::new(Node::new(a, None, None))),
+                    Some(Box::new(Node::new(b, None, None))),
+                );
+                head = Some(new_node);
+            } else {
+                let new_node = Node::new(
+                    operator,
+                    Some(Box::new(head.unwrap())),
+                    Some(Box::new(Node::new(b, None, None))),
+                );
+                head = Some(new_node);
+            }
             operands.push(result);
         }
     }
     operands.pop().expect("Invalid expression") == Operator::True
-}
-
-pub fn eval_formula(formula: &str) -> bool {
-    parse_expression(formula)
 }
 
 #[cfg(test)]
