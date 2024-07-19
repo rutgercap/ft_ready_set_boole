@@ -1,70 +1,62 @@
-#[derive(PartialEq, Debug, Clone, Copy)]
-enum Node {
-    Operator(Operator),
+#[derive(PartialEq, Debug, Clone)]
+enum Operator {
+    And(Box<Operator>, Box<Operator>),
+    Or(Box<Operator>, Box<Operator>),
+    Xor(Box<Operator>, Box<Operator>),
+    Implies(Box<Operator>, Box<Operator>),
+    Equals(Box<Operator>, Box<Operator>),
+    Not(Box<Operator>),
     Operand(char),
 }
 
-impl Node {
-    fn to_operand(self) -> char {
-        match self {
-            Node::Operand(c) => c,
-            _ => panic!("Node is not an operand"),
-        }
-    }
-}
-
-#[derive(PartialEq, Debug, Clone, Copy)]
-enum Operator {
-    And(char, char),
-    Or(char, char),
-    Xor(char, char),
-    Implies(char, char),
-    Equals(char, char),
-    Not(char),
-}
-
 impl Operator {
-    fn from_char(c: char, a: char, b: char) -> Operator {
-        let a = a.to_uppercase().next().unwrap();
-        let b = b.to_uppercase().next().unwrap();
-        match c {
-            '&' => Operator::And(a, b),
-            '|' => Operator::Or(a, b),
-            '^' => Operator::Xor(a, b),
-            '>' => Operator::Implies(a, b),
-            '=' => Operator::Equals(a, b),
+    fn operand(a: char) -> Operator {
+        Operator::Operand(a.to_uppercase().next().unwrap())
+    }
+
+    fn with_two(new: char, a: Operator, b: Operator) -> Operator {
+        match new {
+            '&' => Operator::And(Box::new(a), Box::new(b)),
+            '|' => Operator::Or(Box::new(a), Box::new(b)),
+            '^' => Operator::Xor(Box::new(a), Box::new(b)),
+            '>' => Operator::Implies(Box::new(a), Box::new(b)),
+            '=' => Operator::Equals(Box::new(a), Box::new(b)),
             _ => panic!("Invalid operator"),
         }
     }
 
-    fn not(a: char) -> Operator {
-        Operator::Not(a.to_uppercase().next().unwrap())
+    fn not(a: Operator) -> Operator {
+        Operator::Not(Box::new(a))
     }
 }
 
-fn nodes_from_formula(formula: &str) -> Vec<Node> {
-    let mut stack: Vec<Node> = Vec::new();
+fn nodes_from_formula(formula: &str) -> Option<Operator> {
+    let mut stack: Vec<Operator> = Vec::new();
 
     for token in formula.chars() {
         if token.is_alphabetic() {
-            stack.push(Node::Operand(token));
+            stack.push(Operator::operand(token));
             continue;
         }
         match token {
             '!' => {
-                let operand = stack.pop().unwrap().to_operand();
-                let node = Node::Operator(Operator::not(operand));
+                let operand = stack.pop().expect("No operand to negate");
+                let node = Operator::not(operand);
                 stack.push(node);
-            },
+            }
             _ => {
-                let right = stack.pop().unwrap().to_operand();
-                let left = stack.pop().unwrap().to_operand();
-                let node = Node::Operator(Operator::from_char(token, left, right));
+                println!("Stack: {:?}", stack);
+                let right = stack.pop().expect("Not enough operators on stack");
+                let left = stack.pop().expect("Not enough operators on stack");
+                let node = Operator::with_two(token, left, right);
                 stack.push(node);
             }
         }
     }
-    stack
+    if stack.len() > 1 {
+        panic!("Too many operands");
+    }
+    stack.pop()
 }
 
 pub fn print_truth_table(formula: &str) {
@@ -79,40 +71,78 @@ mod tests {
     fn evaluating_basic_formulas_works() {
         let nodes = nodes_from_formula("AB&");
 
-        assert_eq!(nodes, vec![Node::Operator(Operator::And('A', 'B'))]);
+        assert_eq!(
+            nodes.unwrap(),
+            Operator::with_two('&', Operator::operand('A'), Operator::operand('B'))
+        );
     }
 
     #[test]
     fn evaluating_not_works() {
         let nodes = nodes_from_formula("A!");
 
-        assert_eq!(nodes, vec![Node::Operator(Operator::Not('A'))]);
+        assert_eq!(nodes.unwrap(), Operator::not(Operator::Operand('A')));
     }
 
     #[test]
     fn evaluating_empty_string_works() {
         let nodes = nodes_from_formula("");
 
-        assert_eq!(nodes, vec![]);
+        assert_eq!(nodes, None);
+    }
+
+    #[test]
+    #[should_panic]
+    fn evaluating_string_with_too_many_operands_throws_error() {
+        let _ = nodes_from_formula("ABB&");
     }
 
     #[test]
     fn evaluationg_formula_with_multiple_operators_works() {
-        let tree = nodes_from_formula("AB&C|");
+        let tree = nodes_from_formula("AB&C|").unwrap();
 
-        assert_eq!(tree, vec![
-            Node::Operator(Operator::Or(Operator::And('A', 'B'), 'C')),
-        ]);
+        assert_eq!(
+            tree,
+            Operator::with_two(
+                '|',
+                Operator::with_two('&', Operator::operand('A'), Operator::operand('B')),
+                Operator::operand('C')
+            )
+        );
     }
 
     #[test]
     fn evalauting_complicated_formula_works() {
-        let tree = nodes_from_formula("ABC|&");
+        let tree = nodes_from_formula("ABC|&").unwrap();
 
+        assert_eq!(
+            tree,
+            Operator::with_two(
+                '&',
+                Operator::operand('A'),
+                Operator::with_two('|', Operator::operand('B'), Operator::operand('C')),
+            )
+        );
     }
 
     #[test]
     fn evaluate_another_formula() {
-        let tree = nodes_from_formula("AB!CD&|");
+        let tree = nodes_from_formula("ABCD||=").unwrap();
+
+        assert_eq!(tree,
+            Operator::with_two(
+                '=',
+                Operator::with_two(
+                    '|',
+                    Operator::with_two(
+                        '|',
+                        Operator::operand('1'),
+                        Operator::operand('0'),
+                    ),
+                    Operator::operand('1'),
+                ),
+                Operator::operand('1'),
+            )
+        );
     }
 }
