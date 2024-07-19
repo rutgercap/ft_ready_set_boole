@@ -1,8 +1,9 @@
 use gray_code::gray_code;
 
 mod adder;
-mod multiplier;
+mod evaluation;
 mod gray_code;
+mod multiplier;
 
 fn main() {
     let something = 10;
@@ -17,4 +18,11 @@ fn main() {
     println!("{}", gray_code(0));
     println!("{}", gray_code(1));
     println!("{}", gray_code(2));
+
+    let expression = "10|";
+    let result = evaluation::eval_formula(expression);
+    println!(
+        "The result from evaluating the expression '{}' is: {}",
+        expression, result
+    );
 }
