@@ -49,7 +49,6 @@ fn nodes_from_formula(formula: &str) -> Option<Operator> {
                 stack.push(node);
             }
             _ => {
-                println!("Stack: {:?}", stack);
                 let right = stack.pop().expect("Not enough operators on stack");
                 let left = stack.pop().expect("Not enough operators on stack");
                 let node = Operator::with_two(token, left, right);
@@ -241,13 +240,45 @@ mod tests {
             tree,
             Operator::with_two(
                 '=',
+                Operator::Operand('A'),
                 Operator::with_two(
                     '|',
-                    Operator::with_two('|', Operator::operand('1'), Operator::operand('0'),),
-                    Operator::operand('1'),
+                    Operator::operand('B'),
+                    Operator::with_two('|', Operator::operand('C'), Operator::operand('D'),),
                 ),
-                Operator::operand('1'),
             )
         );
+    }
+
+    #[test]
+    fn can_solve_for_correct_values_1() {
+        let tree = nodes_from_formula("AB&").unwrap();
+        let values = HashMap::from_iter(vec![('A', true), ('B', false)]);
+        
+        assert_eq!(solve(&tree, &values), false);
+    }
+
+    #[test]
+    fn can_solve_for_correct_values_2() {
+        let tree = nodes_from_formula("AB|").unwrap();
+        let values = HashMap::from_iter(vec![('A', true), ('B', false)]);
+        
+        assert_eq!(solve(&tree, &values), true);
+    }
+
+    #[test]
+    fn can_solve_for_correct_values_3() {
+        let tree = nodes_from_formula("ABCD||=").unwrap();
+        let values = HashMap::from_iter(vec![('A', true), ('B', false),('C', true), ('D', true)]);
+        
+        assert_eq!(solve(&tree, &values), true);
+    }
+
+    #[test]
+    fn can_solve_for_correct_values_4() {
+        let tree = nodes_from_formula("A").unwrap();
+        let values = HashMap::from_iter(vec![('A', true)]);
+        
+        assert_eq!(solve(&tree, &values), true);
     }
 }
