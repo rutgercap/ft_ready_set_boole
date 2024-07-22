@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use itertools::{iproduct, Itertools};
 
@@ -79,14 +79,49 @@ fn print_header(operands: &[char]) {
     let mut temp: String = operands.iter().map(|c| format!("| {} ", c)).collect();
     temp.push_str("| = |");
     println!("{}", temp);
+    let mut temp: String = operands.iter().map(|_| "|---").collect();
+    temp.push_str("|---|");
+    println!("{}", temp);
 }
 
-fn combinations(operands: &[char]) {
-    let mut trues = 0;
-    let mut values: HashMap<char, bool>= operands.into_iter().map(|&c| (c, false)).collect();
-    // get result
-    for i in values {
+fn operand_combinations(operands: &[char]) -> Vec<Vec<(char, bool)>> {
+    operands
+        .iter()
+        .cartesian_product(vec![true, false])
+        .map(|(&c, b)| (c, b))
+        .combinations(operands.len())
+        .filter(|c| {
+            let mut seen = HashSet::new();
+            for (c, _) in c {
+                if seen.contains(c) {
+                    return false;
+                }
+                seen.insert(c);
+            }
+            true
+        }).sorted_by(|a,b| {
+            let n_trues = a.iter().fold(0, |a,(_, b) | if *b { a + 1 } else { a });
+            let m_trues = b.iter().fold(0, |a,(_, b)| if *b { a + 1 } else { a });
+            n_trues.cmp(&m_trues)
+        })
+        .collect_vec()
+}
 
+fn print_values(values: &[(char, bool)]) -> String {
+    let mut temp: String = values.iter().map(|(_, b)| format!("| {} ", if *b { 1 } else { 0 })).collect();
+    temp.push_str("|");
+    temp
+}
+
+fn solve(node: &Operator, values: &HashMap<char, bool>) -> bool {
+    match node {
+        Operator::And(a, b) => solve(a, values) && solve(b, values),
+        Operator::Or(a, b) => solve(a, values) || solve(b, values),
+        Operator::Xor(a, b) => solve(a, values) ^ solve(b, values),
+        Operator::Implies(a, b) => !solve(a, values) || solve(b, values),
+        Operator::Equals(a, b) => solve(a, values) == solve(b, values),
+        Operator::Not(a) => !solve(a, values),
+        Operator::Operand(c) => *values.get(c).expect("No value for operand"),
     }
 }
 
@@ -95,14 +130,17 @@ pub fn print_truth_table(formula: &str) {
     if stack_option.is_none() {
         return;
     }
+
     let stack = stack_option.unwrap();
     let operands = operands_in_formula(formula);
     print_header(&operands);
-let combinations: (char,bool ) = operands.iter()
-    .cartesian_product(vec![true, false]) 
-    .map(|(&c, b)| (c,b))
-    .collect();
-    println!("{:?}", combinations)
+    let combinations = operand_combinations(&operands);
+    for comb in combinations {
+        let mut values = print_values(&comb);
+        let result = solve(&stack, &HashMap::from_iter(comb));
+        values.push_str(format!(" {} |", if result { 1 } else { 0 }).as_str());
+        println!("{}", values);
+    }
 }
 
 #[cfg(test)]
