@@ -140,6 +140,13 @@ mod tests {
     }
 
     #[test]
+    fn evaluating_simple_formula_works() {
+        let nodes = nodes_from_formula("A").unwrap();
+
+        assert_eq!(nodes, Operator::operand('A'));
+    }
+
+    #[test]
     #[should_panic]
     fn evaluating_string_with_too_many_operands_throws_error() {
         let _ = nodes_from_formula("ABB&");
