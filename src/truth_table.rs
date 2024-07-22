@@ -1,3 +1,7 @@
+use std::collections::HashMap;
+
+use itertools::{iproduct, Itertools};
+
 #[derive(PartialEq, Debug, Clone)]
 enum Operator {
     And(Box<Operator>, Box<Operator>),
@@ -77,6 +81,14 @@ fn print_header(operands: &[char]) {
     println!("{}", temp);
 }
 
+fn combinations(operands: &[char]) {
+    let mut trues = 0;
+    let mut values: HashMap<char, bool>= operands.into_iter().map(|&c| (c, false)).collect();
+    // get result
+    for i in values {
+
+    }
+}
 
 pub fn print_truth_table(formula: &str) {
     let stack_option = nodes_from_formula(formula);
@@ -84,10 +96,13 @@ pub fn print_truth_table(formula: &str) {
         return;
     }
     let stack = stack_option.unwrap();
-
     let operands = operands_in_formula(formula);
     print_header(&operands);
-
+let combinations: (char,bool ) = operands.iter()
+    .cartesian_product(vec![true, false]) 
+    .map(|(&c, b)| (c,b))
+    .collect();
+    println!("{:?}", combinations)
 }
 
 #[cfg(test)]

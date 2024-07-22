@@ -27,5 +27,5 @@ fn main() {
         expression, result
     );
 
-    truth_table::print_truth_table("AB&C|");
+    truth_table::print_truth_table("ABC|&");
 }
