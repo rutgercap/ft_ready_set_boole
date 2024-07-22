@@ -59,8 +59,35 @@ fn nodes_from_formula(formula: &str) -> Option<Operator> {
     stack.pop()
 }
 
+fn operands_in_formula(formula: &str) -> Vec<char> {
+    formula
+        .chars()
+        .filter(|c| c.is_alphabetic())
+        .fold(vec![], |mut acc, c| {
+            if !acc.contains(&c) {
+                acc.push(c);
+            }
+            acc
+        })
+}
+
+fn print_header(operands: &[char]) {
+    let mut temp: String = operands.iter().map(|c| format!("| {} ", c)).collect();
+    temp.push_str("| = |");
+    println!("{}", temp);
+}
+
+
 pub fn print_truth_table(formula: &str) {
-    let stack = nodes_from_formula(formula);
+    let stack_option = nodes_from_formula(formula);
+    if stack_option.is_none() {
+        return;
+    }
+    let stack = stack_option.unwrap();
+
+    let operands = operands_in_formula(formula);
+    print_header(&operands);
+
 }
 
 #[cfg(test)]
@@ -75,6 +102,27 @@ mod tests {
             nodes.unwrap(),
             Operator::with_two('&', Operator::operand('A'), Operator::operand('B'))
         );
+    }
+
+    #[test]
+    fn getting_operands_from_formula_works() {
+        let operands = operands_in_formula("AB&");
+
+        assert_eq!(operands, vec!['A', 'B',]);
+    }
+
+    #[test]
+    fn getting_operands_from_formula_does_not_count_doubles() {
+        let operands = operands_in_formula("ABB&");
+
+        assert_eq!(operands, vec!['A', 'B',]);
+    }
+
+    #[test]
+    fn getting_operands_from_formula_works_for_complicated_formulas() {
+        let operands = operands_in_formula("ABCD||=E");
+
+        assert_eq!(operands, vec!['A', 'B', 'C', 'D', 'E',]);
     }
 
     #[test]
@@ -129,16 +177,13 @@ mod tests {
     fn evaluate_another_formula() {
         let tree = nodes_from_formula("ABCD||=").unwrap();
 
-        assert_eq!(tree,
+        assert_eq!(
+            tree,
             Operator::with_two(
                 '=',
                 Operator::with_two(
                     '|',
-                    Operator::with_two(
-                        '|',
-                        Operator::operand('1'),
-                        Operator::operand('0'),
-                    ),
+                    Operator::with_two('|', Operator::operand('1'), Operator::operand('0'),),
                     Operator::operand('1'),
                 ),
                 Operator::operand('1'),
