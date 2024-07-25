@@ -5,6 +5,7 @@ mod evaluation;
 mod gray_code;
 mod multiplier;
 mod truth_table;
+mod negation_normal_form;
 
 fn main() {
     let something = 10;
@@ -28,4 +29,11 @@ fn main() {
     );
 
     truth_table::print_truth_table("ABC|&");
+
+    let expression = "A!B&";
+    let result = negation_normal_form::negation_normal_form(expression);
+    println!(
+        "The negation normal form of the expression '{}' is: {}",
+        expression, result
+    );
 }
