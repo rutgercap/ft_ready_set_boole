@@ -281,4 +281,12 @@ mod tests {
         
         assert_eq!(solve(&tree, &values), true);
     }
+
+    #[test]
+    fn can_solve_for_correct_values_5() {
+        let tree = nodes_from_formula("A!!").unwrap();
+        let values = HashMap::from_iter(vec![('A', true)]);
+        
+        assert_eq!(solve(&tree, &values), true);
+    }
 }
