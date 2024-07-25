@@ -81,6 +81,13 @@ mod tests {
     }
 
     #[test]
+    fn evaluating_double_not_works() {
+        let nodes = Operator::from_formula("A!!");
+
+        assert_eq!(nodes.unwrap(), Operator::not(Operator::not(Operator::Operand('A'))));
+    }
+
+    #[test]
     fn evaluating_empty_string_works() {
         let nodes = Operator::from_formula("");
 
