@@ -1,3 +1,5 @@
+use core::panic;
+
 #[derive(PartialEq, Debug, Clone, Copy)]
 enum Operator {
     True,
@@ -32,9 +34,13 @@ impl Operator {
             _ => false,
         }
     }
+
+    fn is_not(&self) -> bool {
+        *self == Operator::Not
+    }
 }
 
-fn evaluate(a: Operator, b: Operator, operator: Operator) -> Operator {
+fn evaluate_two(a: Operator, b: Operator, operator: Operator) -> Operator {
     match operator {
         Operator::And => {
             if a == Operator::True && b == Operator::True {
@@ -75,6 +81,14 @@ fn evaluate(a: Operator, b: Operator, operator: Operator) -> Operator {
     }
 }
 
+fn evaluate_not(a: Operator) -> Operator {
+    if a == Operator::True {
+        Operator::False
+    } else {
+        Operator::True
+    }
+}
+
 pub fn eval_formula(formula: &str) -> bool {
     if formula.is_empty() {
         return true;
@@ -84,10 +98,18 @@ pub fn eval_formula(formula: &str) -> bool {
         let operator = Operator::from_char(char);
         if operator.is_operand() {
             operands.push(operator);
+        } else if operator.is_not() {
+            let a = operands.pop().expect("Invalid expression");
+            if !a.is_operand() {
+                panic!("Invalid expression");
+            }
+            let result = evaluate_not(a);
+            operands.push(result);
         } else {
+
             let a = operands.pop().expect("Invalid expression");
             let b = operands.pop().expect("Invalid expression");
-            let result = evaluate(a, b, operator);
+            let result = evaluate_two(a, b, operator);
             operands.push(result);
         }
     }
@@ -118,5 +140,15 @@ mod tests {
     #[test]
     fn evaluating_empty_formulas_works() {
         evaluate_formula("", true);
+    }
+
+    #[test]
+    fn evaluating_negation_works() {
+        evaluate_formula("1!", false);
+    }
+
+    #[test]
+    fn evaluating_double_negation_works() {
+        evaluate_formula("1!!", true);
     }
 }
