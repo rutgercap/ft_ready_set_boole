@@ -6,6 +6,7 @@ mod gray_code;
 mod multiplier;
 mod truth_table;
 mod negation_normal_form;
+mod operator;
 
 fn main() {
     let something = 10;

@@ -13,4 +13,11 @@ mod tests {
 
         assert_eq!(result, "");
     }
+
+    #[test]
+    fn negation_normal_form_works_with_simple_notation() {
+        let result = negation_normal_form("AB&!");
+
+        assert_eq!(result, "A!B!|");
+    }
 }
