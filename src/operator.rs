@@ -56,6 +56,18 @@ impl Operator {
         }
         stack.pop()
     }
+
+    pub fn to_string(&self) -> String {
+        match self {
+            Operator::And(a, b) => format!("{}{}&", a.to_string(), b.to_string()),
+            Operator::Or(a, b) => format!("{}{}|", a.to_string(), b.to_string()),
+            Operator::Xor(a, b) => format!("{}{}^", a.to_string(), b.to_string()),
+            Operator::Implies(a, b) => format!("{}{}>", a.to_string(), b.to_string()),
+            Operator::Equals(a, b) => format!("{}{}=", a.to_string(), b.to_string()),
+            Operator::Not(c) => format!("{}!", c.to_string()),
+            Operator::Operand(c) => c.to_string(),
+        }
+    }
 }
 
 
