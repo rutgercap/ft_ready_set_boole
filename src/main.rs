@@ -7,6 +7,7 @@ mod multiplier;
 mod truth_table;
 mod negation_normal_form;
 mod operator;
+mod conjunctive_normal_form;
 
 fn main() {
     let something = 10;
