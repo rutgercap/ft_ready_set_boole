@@ -31,7 +31,7 @@ fn main() {
 
     truth_table::print_truth_table("ABC|&");
 
-    let expression = "A!B&";
+    let expression = "AB&!";
     let result = negation_normal_form::negation_normal_form(expression);
     println!(
         "The negation normal form of the expression '{}' is: {}",
