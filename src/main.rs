@@ -38,4 +38,11 @@ fn main() {
         "The negation normal form of the expression '{}' is: {}",
         expression, result
     );
+
+    let expression = "AB&!";
+    let result = conjunctive_normal_form::conjunctive_normal_form(expression);
+    println!(
+        "The negation normal form of the expression '{}' is: {}",
+        expression, result
+    );
 }

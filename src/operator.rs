@@ -25,6 +25,26 @@ impl Operator {
         }
     }
 
+    pub fn and(a: Operator, b: Operator) -> Operator {
+        Operator::with_two('&', a, b)
+    }
+
+    pub fn or(a: Operator, b: Operator) -> Operator {
+        Operator::with_two('|', a, b)
+    }
+    
+    pub fn xor(a: Operator, b: Operator) -> Operator {
+        Operator::with_two('^', a, b)
+    }
+
+    pub fn equals(a: Operator, b: Operator) -> Operator {
+        Operator::with_two('=', a, b)
+    }
+
+    pub fn implies(a: Operator, b: Operator) -> Operator {
+        Operator::with_two('>', a, b)
+    }
+
     pub fn not(a: Operator) -> Operator {
         Operator::Not(Box::new(a))
     }

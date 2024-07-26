@@ -194,7 +194,6 @@ mod tests {
 
     #[test]
     fn negation_normal_form_works_with_complicated_things() {
-        let result = negation_normal_form("AB|C&!");
         let operators = Operator::from_formula("AB|C&!").unwrap();
         let expected_operator_tree = Operator::with_two(
             '|',
