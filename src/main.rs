@@ -1,6 +1,7 @@
 use gray_code::gray_code;
 
 mod adder;
+mod sat;
 mod evaluation;
 mod gray_code;
 mod multiplier;
@@ -43,6 +44,13 @@ fn main() {
     let result = conjunctive_normal_form::conjunctive_normal_form(expression);
     println!(
         "The negation normal form of the expression '{}' is: {}",
+        expression, result
+    );
+
+    let expression = "AB&!";
+    let result = sat::sat(expression);
+    println!(
+        "The expression '{}' is satisfiable: {}",
         expression, result
     );
 }
