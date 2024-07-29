@@ -11,6 +11,8 @@ mod operator;
 mod conjunctive_normal_form;
 mod powerset;
 mod set_evaluation;
+mod curve;
+mod inverse_curve;
 
 fn main() {
     let something = 10;
@@ -67,4 +69,12 @@ fn main() {
         "The result from evaluating the formula '{}' with the set {:?} is: {:?}",
         formula, set, result
     );
+
+    let x = 10;
+    let y = 10;
+    let result = curve::map(x, y);
+    println!("The result from mapping the values {} and {} is: {}", x, y, result);
+
+    let inverse = inverse_curve::reverse_map(result);
+    println!("The result from reversing the mapping of {} is: {:?}", result, inverse);
 }

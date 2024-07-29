@@ -1,6 +1,5 @@
 use std::collections::{HashMap, HashSet};
 
-use itertools::concat;
 
 use crate::operator::Operator;
 

@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use itertools::Itertools;
-use crate::operator::{self, Operator};
+use crate::operator::Operator;
 
 
 fn operands_in_formula(formula: &str) -> Vec<char> {
