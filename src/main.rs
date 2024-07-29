@@ -10,6 +10,7 @@ mod negation_normal_form;
 mod operator;
 mod conjunctive_normal_form;
 mod powerset;
+mod set_evaluation;
 
 fn main() {
     let something = 10;
@@ -58,4 +59,12 @@ fn main() {
     let set = vec![1, 2, 3];
     let result = powerset::powerset(set.clone());
     println!("The powerset of the set {:?} is: {:?}", set, result);
+
+    let set = vec![1, 2, 3];
+    let formula = "A&B";
+    let result = set_evaluation::eval_set(formula, vec![set.clone()]);
+    println!(
+        "The result from evaluating the formula '{}' with the set {:?} is: {:?}",
+        formula, set, result
+    );
 }
