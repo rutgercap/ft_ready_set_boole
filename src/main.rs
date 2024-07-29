@@ -9,6 +9,7 @@ mod truth_table;
 mod negation_normal_form;
 mod operator;
 mod conjunctive_normal_form;
+mod powerset;
 
 fn main() {
     let something = 10;
@@ -53,4 +54,8 @@ fn main() {
         "The expression '{}' is satisfiable: {}",
         expression, result
     );
+
+    let set = vec![1, 2, 3];
+    let result = powerset::powerset(set.clone());
+    println!("The powerset of the set {:?} is: {:?}", set, result);
 }
