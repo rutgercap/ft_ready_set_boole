@@ -20,7 +20,7 @@ pub fn sat(formula: &str) -> bool {
     let operator = operator.unwrap();
     let operands = operands_in_formula(formula);
     let table = truth_table(&operator, &operands);
-    table.iter().any(|(_, b)| *b)   
+    table.iter().any(|(_, b)| *b)
 }
 
 #[cfg(test)]

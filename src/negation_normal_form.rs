@@ -54,15 +54,27 @@ impl Operator {
                     Operator::not(a.clone().to_negation_normal_form()),
                     b.clone().to_negation_normal_form(),
                 ),
-                Operator::with_two('&', a.to_negation_normal_form(), Operator::not(b.to_negation_normal_form())),
+                Operator::with_two(
+                    '&',
+                    a.to_negation_normal_form(),
+                    Operator::not(b.to_negation_normal_form()),
+                ),
             ),
             Operator::Implies(a, b) => Operator::with_two(
                 '|',
                 Operator::not(a.to_negation_normal_form()),
                 b.to_negation_normal_form(),
             ),
-            Operator::And(a, b) => Operator::with_two('&',a.to_negation_normal_form(), b.to_negation_normal_form()),
-            Operator::Or(a, b) => Operator::with_two('|',a.to_negation_normal_form(), b.to_negation_normal_form()),
+            Operator::And(a, b) => Operator::with_two(
+                '&',
+                a.to_negation_normal_form(),
+                b.to_negation_normal_form(),
+            ),
+            Operator::Or(a, b) => Operator::with_two(
+                '|',
+                a.to_negation_normal_form(),
+                b.to_negation_normal_form(),
+            ),
             Operator::Operand(_) => self,
         }
     }
@@ -98,7 +110,7 @@ mod tests {
     #[test]
     fn negation_normal_form_works_when_negating_conjunction() {
         let result = negation_normal_form("AB&!");
-        
+
         assert_eq!(result, "A!B!|");
     }
 

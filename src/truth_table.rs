@@ -1,7 +1,6 @@
-use std::collections::{HashMap, HashSet};
-use itertools::Itertools;
 use crate::operator::Operator;
-
+use itertools::Itertools;
+use std::collections::{HashMap, HashSet};
 
 fn operands_in_formula(formula: &str) -> Vec<char> {
     formula
@@ -39,16 +38,20 @@ fn operand_combinations(operands: &[char]) -> Vec<Vec<(char, bool)>> {
                 seen.insert(c);
             }
             true
-        }).sorted_by(|a,b| {
-            let n_trues = a.iter().fold(0, |a,(_, b) | if *b { a + 1 } else { a });
-            let m_trues = b.iter().fold(0, |a,(_, b)| if *b { a + 1 } else { a });
+        })
+        .sorted_by(|a, b| {
+            let n_trues = a.iter().fold(0, |a, (_, b)| if *b { a + 1 } else { a });
+            let m_trues = b.iter().fold(0, |a, (_, b)| if *b { a + 1 } else { a });
             n_trues.cmp(&m_trues)
         })
         .collect_vec()
 }
 
 fn print_values(values: &[(char, bool)]) -> String {
-    let mut temp: String = values.iter().map(|(_, b)| format!("| {} ", if *b { 1 } else { 0 })).collect();
+    let mut temp: String = values
+        .iter()
+        .map(|(_, b)| format!("| {} ", if *b { 1 } else { 0 }))
+        .collect();
     temp.push_str("|");
     temp
 }
@@ -65,12 +68,15 @@ fn solve(node: &Operator, values: &HashMap<char, bool>) -> bool {
     }
 }
 
-pub fn truth_table(operator: &Operator, operands: &[char]) -> Vec<(Vec<(char,bool)>, bool)> {
+pub fn truth_table(operator: &Operator, operands: &[char]) -> Vec<(Vec<(char, bool)>, bool)> {
     let combinations = operand_combinations(operands);
-    combinations.iter().map(|comb| {
-        let values = HashMap::from_iter(comb.clone());
-        (comb.clone(), solve(operator, &values))
-    }).collect()
+    combinations
+        .iter()
+        .map(|comb| {
+            let values = HashMap::from_iter(comb.clone());
+            (comb.clone(), solve(operator, &values))
+        })
+        .collect()
 }
 
 pub fn print_truth_table(formula: &str) {
@@ -78,7 +84,7 @@ pub fn print_truth_table(formula: &str) {
     if operator.is_none() {
         return;
     }
-    let operator= operator.unwrap();
+    let operator = operator.unwrap();
     let operands = operands_in_formula(formula);
     print_header(&operands);
     let table = truth_table(&operator, &operands);
@@ -118,7 +124,7 @@ mod tests {
     fn can_solve_for_correct_values_1() {
         let tree = Operator::from_formula("AB&").unwrap();
         let values = HashMap::from_iter(vec![('A', true), ('B', false)]);
-        
+
         assert_eq!(solve(&tree, &values), false);
     }
 
@@ -126,15 +132,15 @@ mod tests {
     fn can_solve_for_correct_values_2() {
         let tree = Operator::from_formula("AB|").unwrap();
         let values = HashMap::from_iter(vec![('A', true), ('B', false)]);
-        
+
         assert_eq!(solve(&tree, &values), true);
     }
 
     #[test]
     fn can_solve_for_correct_values_3() {
         let tree = Operator::from_formula("ABCD||=").unwrap();
-        let values = HashMap::from_iter(vec![('A', true), ('B', false),('C', true), ('D', true)]);
-        
+        let values = HashMap::from_iter(vec![('A', true), ('B', false), ('C', true), ('D', true)]);
+
         assert_eq!(solve(&tree, &values), true);
     }
 
@@ -142,7 +148,7 @@ mod tests {
     fn can_solve_for_correct_values_4() {
         let tree = Operator::from_formula("A").unwrap();
         let values = HashMap::from_iter(vec![('A', true)]);
-        
+
         assert_eq!(solve(&tree, &values), true);
     }
 
@@ -150,15 +156,15 @@ mod tests {
     fn can_solve_for_correct_values_5() {
         let tree = Operator::from_formula("A!!").unwrap();
         let values = HashMap::from_iter(vec![('A', true)]);
-        
+
         assert_eq!(solve(&tree, &values), true);
     }
 
     #[test]
     fn can_solve_for_correct_values_6() {
         let tree = Operator::from_formula("AB&!").unwrap();
-        let values = HashMap::from_iter(vec![('A', true, ), ('B', true)]);
-        
+        let values = HashMap::from_iter(vec![('A', true), ('B', true)]);
+
         assert_eq!(solve(&tree, &values), false);
     }
 }

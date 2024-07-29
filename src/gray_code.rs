@@ -2,7 +2,6 @@ pub fn gray_code(n: u32) -> u32 {
     n ^ (n >> 1)
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -25,8 +24,8 @@ mod tests {
             (7, 4),
             (8, 12),
             (2147483648, 3221225472),
-          ];
-        
+        ];
+
         for (value, expected) in test_cases {
             gray_code_0(value, expected);
         }

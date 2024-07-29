@@ -9,7 +9,6 @@ pub enum Operator {
     Operand(char),
 }
 
-
 impl Operator {
     pub fn operand(a: char) -> Operator {
         Operator::Operand(a.to_uppercase().next().unwrap())
@@ -40,7 +39,7 @@ impl Operator {
 
     pub fn from_formula(formula: &str) -> Option<Operator> {
         let mut stack: Vec<Operator> = Vec::new();
-    
+
         for token in formula.chars() {
             if token.is_alphabetic() {
                 stack.push(Operator::operand(token));
@@ -79,7 +78,6 @@ impl Operator {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -105,7 +103,10 @@ mod tests {
     fn evaluating_double_not_works() {
         let nodes = Operator::from_formula("A!!");
 
-        assert_eq!(nodes.unwrap(), Operator::not(Operator::not(Operator::Operand('A'))));
+        assert_eq!(
+            nodes.unwrap(),
+            Operator::not(Operator::not(Operator::Operand('A')))
+        );
     }
 
     #[test]

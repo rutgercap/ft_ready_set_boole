@@ -106,7 +106,6 @@ pub fn eval_formula(formula: &str) -> bool {
             let result = evaluate_not(a);
             operands.push(result);
         } else {
-
             let a = operands.pop().expect("Invalid expression");
             let b = operands.pop().expect("Invalid expression");
             let result = evaluate_two(a, b, operator);

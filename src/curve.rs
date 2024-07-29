@@ -1,4 +1,3 @@
-
 pub const ORDER: u16 = 2;
 
 pub fn map(x: u16, y: u16) -> f64 {

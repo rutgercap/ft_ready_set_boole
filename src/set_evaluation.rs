@@ -1,6 +1,5 @@
 use std::collections::{HashMap, HashSet};
 
-
 use crate::operator::Operator;
 
 fn operands_in_formula(formula: &str) -> Vec<char> {
@@ -41,7 +40,7 @@ fn solve(operator: &Operator, sets: HashMap<char, HashSet<i32>>) -> HashSet<i32>
             let a: HashSet<i32> = a.into_iter().filter(|x| !b.contains(x)).collect();
             let b: HashSet<i32> = b.into_iter().filter(|x| !a.contains(x)).collect();
             a.into_iter().chain(b.into_iter()).collect()
-        },
+        }
         Operator::Implies(a, b) => {
             let a = solve(a, sets.clone());
             let b = solve(b, sets.clone());
@@ -51,7 +50,7 @@ fn solve(operator: &Operator, sets: HashMap<char, HashSet<i32>>) -> HashSet<i32>
             } else {
                 HashSet::new()
             }
-        },
+        }
         Operator::Equals(a, b) => {
             let a = solve(a, sets.clone());
             let b = solve(b, sets.clone());
@@ -60,7 +59,7 @@ fn solve(operator: &Operator, sets: HashMap<char, HashSet<i32>>) -> HashSet<i32>
             } else {
                 HashSet::new()
             }
-        },
+        }
     }
 }
 

@@ -1,18 +1,18 @@
 use gray_code::gray_code;
 
 mod adder;
-mod sat;
+mod conjunctive_normal_form;
+mod curve;
 mod evaluation;
 mod gray_code;
+mod inverse_curve;
 mod multiplier;
-mod truth_table;
 mod negation_normal_form;
 mod operator;
-mod conjunctive_normal_form;
 mod powerset;
+mod sat;
 mod set_evaluation;
-mod curve;
-mod inverse_curve;
+mod truth_table;
 
 fn main() {
     let something = 10;
@@ -53,10 +53,7 @@ fn main() {
 
     let expression = "AB&!";
     let result = sat::sat(expression);
-    println!(
-        "The expression '{}' is satisfiable: {}",
-        expression, result
-    );
+    println!("The expression '{}' is satisfiable: {}", expression, result);
 
     let set = vec![1, 2, 3];
     let result = powerset::powerset(set.clone());
@@ -64,7 +61,7 @@ fn main() {
 
     let set = vec![vec![1], vec![1, 2]];
     let formula = "AB&";
-    let result = set_evaluation::eval_set(formula,set.clone() );
+    let result = set_evaluation::eval_set(formula, set.clone());
     println!(
         "The result from evaluating the formula '{}' with the set {:?} is: {:?}",
         formula, set, result
@@ -73,8 +70,14 @@ fn main() {
     let x = 10;
     let y = 10;
     let result = curve::map(x, y);
-    println!("The result from mapping the values {} and {} is: {}", x, y, result);
+    println!(
+        "The result from mapping the values {} and {} is: {}",
+        x, y, result
+    );
 
     let inverse = inverse_curve::reverse_map(result);
-    println!("The result from reversing the mapping of {} is: {:?}", result, inverse);
+    println!(
+        "The result from reversing the mapping of {} is: {:?}",
+        result, inverse
+    );
 }

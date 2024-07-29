@@ -6,7 +6,9 @@ pub fn add(left: usize, right: usize) -> usize {
         let current_left_bit = if left & mask > 0 { 1 } else { 0 };
         let current_right_bit = if right & mask > 0 { 1 } else { 0 };
         let sum_bit = current_left_bit ^ current_right_bit ^ carry;
-        carry = (current_left_bit & current_right_bit) | (current_left_bit & carry) | (current_right_bit & carry);
+        carry = (current_left_bit & current_right_bit)
+            | (current_left_bit & carry)
+            | (current_right_bit & carry);
         result |= sum_bit << i;
     }
     result

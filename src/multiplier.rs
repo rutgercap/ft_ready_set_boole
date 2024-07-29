@@ -28,7 +28,6 @@ mod tests {
         assert_eq!(result, 0);
     }
 
-
     #[test]
     fn can_multiply_big_values() {
         let result = multiplier(u32::MAX / 2, 2);

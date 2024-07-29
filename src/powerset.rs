@@ -31,6 +31,18 @@ mod tests {
     fn test_powerset() {
         let set = vec![1, 2, 3];
         let result = powerset(set.clone());
-        assert_eq!(result, vec![vec![], vec![1], vec![2], vec![3], vec![1, 2], vec![1, 3], vec![2, 3], vec![1, 2, 3]]);
+        assert_eq!(
+            result,
+            vec![
+                vec![],
+                vec![1],
+                vec![2],
+                vec![3],
+                vec![1, 2],
+                vec![1, 3],
+                vec![2, 3],
+                vec![1, 2, 3]
+            ]
+        );
     }
 }
