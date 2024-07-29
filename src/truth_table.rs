@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 use itertools::Itertools;
-use crate::operator::Operator;
+use crate::operator::{self, Operator};
 
 
 fn operands_in_formula(formula: &str) -> Vec<char> {
@@ -65,19 +65,25 @@ fn solve(node: &Operator, values: &HashMap<char, bool>) -> bool {
     }
 }
 
+pub fn truth_table(operator: &Operator, operands: &[char]) -> Vec<(Vec<(char,bool)>, bool)> {
+    let combinations = operand_combinations(operands);
+    combinations.iter().map(|comb| {
+        let values = HashMap::from_iter(comb.clone());
+        (comb.clone(), solve(operator, &values))
+    }).collect()
+}
+
 pub fn print_truth_table(formula: &str) {
-    let stack_option = Operator::from_formula(formula);
-    if stack_option.is_none() {
+    let operator = Operator::from_formula(formula);
+    if operator.is_none() {
         return;
     }
-
-    let stack = stack_option.unwrap();
+    let operator= operator.unwrap();
     let operands = operands_in_formula(formula);
     print_header(&operands);
-    let combinations = operand_combinations(&operands);
-    for comb in combinations {
-        let mut values = print_values(&comb);
-        let result = solve(&stack, &HashMap::from_iter(comb));
+    let table = truth_table(&operator, &operands);
+    for (row, result) in table {
+        let mut values = print_values(&row);
         values.push_str(format!(" {} |", if result { 1 } else { 0 }).as_str());
         println!("{}", values);
     }

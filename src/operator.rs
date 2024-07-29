@@ -9,6 +9,7 @@ pub enum Operator {
     Operand(char),
 }
 
+
 impl Operator {
     pub fn operand(a: char) -> Operator {
         Operator::Operand(a.to_uppercase().next().unwrap())

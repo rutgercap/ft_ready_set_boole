@@ -1,7 +1,7 @@
 use crate::operator::Operator;
 
 impl Operator {
-    fn to_conjunctive_normal_form(self) -> Operator {
+    pub fn to_conjunctive_normal_form(self) -> Operator {
         match self {
             Operator::Operand(_) => self,
             Operator::Not(a) => Operator::not(a.to_conjunctive_normal_form()),
