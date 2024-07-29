@@ -60,9 +60,9 @@ fn main() {
     let result = powerset::powerset(set.clone());
     println!("The powerset of the set {:?} is: {:?}", set, result);
 
-    let set = vec![1, 2, 3];
-    let formula = "A&B";
-    let result = set_evaluation::eval_set(formula, vec![set.clone()]);
+    let set = vec![vec![1], vec![1, 2]];
+    let formula = "AB&";
+    let result = set_evaluation::eval_set(formula,set.clone() );
     println!(
         "The result from evaluating the formula '{}' with the set {:?} is: {:?}",
         formula, set, result
