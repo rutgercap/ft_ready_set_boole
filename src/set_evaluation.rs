@@ -105,7 +105,8 @@ mod tests {
     #[test]
     fn eval_set_works_with_disjunction() {
         let sets = vec![vec![1], vec![2]];
-        let result = eval_set("AB|B|", sets.clone());
+        let mut result = eval_set("AB|B|", sets.clone());
+        result.sort();
         assert_eq!(result, vec![1, 2]);
     }
 
