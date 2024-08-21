@@ -131,7 +131,8 @@ mod tests {
         assert_eq!(result, vec![]);
 
         let sets = vec![vec![1, 3], vec![1, 2]];
-        let result = eval_set("AB!|", sets.clone());
+        let mut result = eval_set("AB!|", sets.clone());
+        result.sort();
         assert_eq!(result, vec![1, 3]);
     }
 
