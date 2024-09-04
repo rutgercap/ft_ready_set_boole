@@ -217,6 +217,5 @@ mod tests {
             Operator::not(Operator::operand('C')),
         );
         assert_eq!(operators.to_negation_normal_form(), expected_operator_tree);
-        // assert_eq!(result, "A!B!&C!|");
     }
 }
