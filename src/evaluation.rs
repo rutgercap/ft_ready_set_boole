@@ -27,7 +27,7 @@ impl Operator {
         }
     }
 
-    fn is_operand(&self) -> bool {
+    pub fn is_operand(&self) -> bool {
         match self {
             Operator::True => true,
             Operator::False => true,
