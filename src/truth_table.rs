@@ -96,8 +96,20 @@ pub fn print_truth_table(formula: &str) {
 }
 
 #[cfg(test)]
-mod tests {
+pub mod tests {
     use super::*;
+
+    pub fn truth_tables_equal(a: &str, b: &str) {
+        let a_operator = Operator::from_formula(a).unwrap();
+        let b_operator = Operator::from_formula(b).unwrap();
+        let a_operands = operands_in_formula(a.to_string().as_str());
+        let b_operands = operands_in_formula(b.to_string().as_str());
+        let a_table = truth_table(&a_operator, &a_operands);
+        let b_table = truth_table(&b_operator, &b_operands);
+        for (a_row, b_row) in a_table.iter().zip(b_table.iter()) {
+            assert_eq!(a_row, b_row);
+        }
+    }
 
     #[test]
     fn getting_operands_from_formula_works() {

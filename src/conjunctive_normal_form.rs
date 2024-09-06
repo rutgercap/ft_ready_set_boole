@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 use crate::operator::Operator;
 
 impl Operator {
@@ -35,15 +37,23 @@ pub fn conjunctive_normal_form(formula: &str) -> String {
     if operands.is_none() {
         return String::new();
     }
-    operands
+    let mut result = operands
         .unwrap()
         .to_negation_normal_form()
-        .to_conjunctive_normal_form()
-        .to_string()
+        .to_conjunctive_normal_form().to_string();
+    let n = result.chars().filter(|c| *c == '&').count();
+    result = result.chars().filter(|c| *c != '&').join("");
+    result.push_str(&"&".repeat(n));
+    result
 }
+
+
 
 #[cfg(test)]
 mod tests {
+
+    use crate::truth_table::tests::truth_tables_equal;
+
     use super::*;
 
     #[test]
@@ -55,50 +65,82 @@ mod tests {
 
     #[test]
     fn conjunctive_normal_form_works_with_negated_and() {
-        let result = conjunctive_normal_form("AB&!");
+        let original = "AB&!";
+        let expected = "A!B!|";
+        let result = conjunctive_normal_form(&original);
 
-        assert_eq!(result, "A!B!|");
+        assert_eq!(result, expected);
+        truth_tables_equal(original, &result);
     }
 
     #[test]
     fn conjunctive_normal_form_works_with_negated_or() {
-        let result = conjunctive_normal_form("AB|!");
+        let original = "AB|!";
+        let expected = "A!B!&";
+        let result = conjunctive_normal_form(&original);
 
-        assert_eq!(result, "A!B!&");
+        assert_eq!(result, expected);
+        truth_tables_equal(original, &result);
     }
 
     #[test]
     fn conjunctive_normal_form_works_with_deep_and() {
-        let result = conjunctive_normal_form("AB|C&");
+        let original = "AB|C&D&";
+        let expected = "AB|CD&&";
+        let result = conjunctive_normal_form(&original);
 
-        assert_eq!(result, "AB|C&");
+        assert_eq!(result, expected);
+        truth_tables_equal(original, &result);
     }
 
     #[test]
     fn conjunctive_normal_form_works_with_1() {
-        let result = conjunctive_normal_form("ABCD&|&");
+        let original = "ABCD&|&";
+        let expected = "ABC|BD|&&";
+        let result = conjunctive_normal_form(&original);
 
-        assert_eq!(result, "ABC|BD|&&");
+        assert_eq!(result, expected);
+        truth_tables_equal(original, &result);
     }
 
     #[test]
     fn conjunctive_normal_form_works_with_many_ors() {
-        let result = conjunctive_normal_form("AB|C|D|");
+        let original = "AB|C|D|";
+        let expected = "AB|C|D|";
+        let result = conjunctive_normal_form(&original);
 
-        assert_eq!(result, "AB|C|D|");
+        assert_eq!(result, expected);
+        truth_tables_equal(original, &result);
     }
 
     #[test]
     fn conjunctive_normal_form_works_with_many_ands() {
-        let result = conjunctive_normal_form("AB&C&D&");
+        let original = "AB&C&D&";
+        let expected = "ABCD&&&";
+        let result = conjunctive_normal_form(&original);
 
-        assert_eq!(result, "AB&C&D&");
+        assert_eq!(result, expected);
+        truth_tables_equal(original, &result);
     }
 
     #[test]
     fn conjunctive_normal_form_works_complicated() {
-        let result = conjunctive_normal_form("AB&!C!|");
+        let original = "AB&!C!|";
+        let expected = "A!B!|C!|";
+        let result = conjunctive_normal_form(&original);
 
-        assert_eq!(result, "A!B!|C!|");
+        assert_eq!(result, expected);
+        truth_tables_equal(original, &result);
+    }
+
+    #[test]
+    fn last_subject_test() {
+        let original = "AB|!C!&";
+        let expected = "A!B!C!&&";
+        let result = conjunctive_normal_form(&original);
+
+        truth_tables_equal(original, &expected);
+        truth_tables_equal(original, &result);
+        assert_eq!(result, expected);
     }
 }

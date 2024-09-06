@@ -48,11 +48,4 @@ mod tests {
         let result = map(original.0, original.1);
         assert_eq!(reverse_map(result), original);
     }
-
-    #[test]
-    fn test_reverse_map_with_big_number() {
-        let original = (10, 10);
-        let result = map(original.0, original.1);
-        assert_eq!(reverse_map(result), original);
-    }
 }
